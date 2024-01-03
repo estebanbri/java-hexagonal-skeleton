@@ -81,7 +81,7 @@ bff-tienda/application/usecase
 @UseCase
 @RequiredArgsConstructor
 @Slf4j
-public class AdministrarUsuarioUseCase implements AdministrarUsuario {
+public class AltaUsuarioUseCase implements RegistrarUsuarioPort {
 
     private final UsuarioRepositorioPort usuarioRepositorio;
 
