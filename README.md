@@ -152,7 +152,7 @@ Por ende tenes dos alternativas:
 - Alternativa 1: Definir manualmente los beans en archivo de @Configuration
 - Alternativa 2: Crear una anotacion custom (@UseCase) que sea un alias a @Component e indicarle a spring mediante
 
-```
+```java
 @Configuration
 @ComponentScan(
 basePackages = "com.arhohuttunen.coffeeshop.application",
