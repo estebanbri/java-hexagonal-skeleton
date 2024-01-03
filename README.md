@@ -21,6 +21,13 @@ Ejemplo:
 
 ## Pasos 2: Crear el paquete de 'domain'.
 Crear objetos para representar los modelos identificados del paso 1 (models, enums,...).
+Por ahi vas a ver en ciertas bibliografias que en esta capa agregan servicios, dicho servicios
+se centran en la lógica de dominio pura.
+Ejemplo: si tuvieras un modelo Producto, dicha clase podria ser ProductService la cual tendria operaciones
+que permitan manipular el estado de un producto, por ej: actualizar precio del producto, actualizar el estado del producto, etc. 
+(Ojo no confundir con los services/usecases que ellos se encargan de coordinar las logicas para cumplir los casos de usos)
+Por otro lado, otras bibliografia directamente no crean estos servicios aparte y embeben estas logicas
+dentro de los modelos llevando a tus modelos de estado ANEMIC (simple estructura de datos) a RICH (estructura de datos + logica).
 
 ## Pasos 3: Crear el paquete 'application' 
 En este paso volcar las reglas de negocio recolectadas en el paso 1 a puertos, es decir a especificaciones (spec) de
