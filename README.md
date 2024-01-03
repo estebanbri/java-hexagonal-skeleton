@@ -1,7 +1,7 @@
 # Proyecto base para implementar arquitectura hexagonal (patron puertos y adaptadores)
 Ejemplo básico: guardar y recuperar los datos de un usuario.
 
-![Descripción de la imagen](/images/picture.jpg)
+![Descripción de la imagen](https://github.com/estebanbri/scaffold-arquitectura-hexagonal/blob/master/arquitectura.png)
 
 Como probar el ejemplo?
 
