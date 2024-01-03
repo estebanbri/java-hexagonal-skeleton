@@ -1,9 +1,10 @@
-package com.example.bfftienda.infrastructure.adapter.rest;
+package com.example.bfftienda.infrastructure.adapter.rest.usuario;
 
-import com.example.bfftienda.application.port.in.ConsultarUsuarioPort;
-import com.example.bfftienda.application.port.in.RegistrarUsuarioPort;
-import com.example.bfftienda.infrastructure.adapter.rest.dto.UserDto;
-import com.example.bfftienda.infrastructure.adapter.rest.mapper.UsuarioDtoMapper;
+import com.example.bfftienda.application.port.in.usuario.ConsultarUsuarioPort;
+import com.example.bfftienda.application.port.in.usuario.RegistrarUsuarioPort;
+import com.example.bfftienda.infrastructure.adapter.rest.usuario.mapper.UsuarioDtoMapper;
+import com.example.bfftienda.infrastructure.adapter.rest.usuario.request.UserRequestDto;
+import com.example.bfftienda.infrastructure.adapter.rest.usuario.response.UsuarioResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,13 @@ public class RestUserAdapter {
     private final UsuarioDtoMapper usuarioMapper;
 
     @GetMapping("users/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDto> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(usuarioMapper.toDto(consultarUsuarioPort.execute(id)), HttpStatus.OK);
 
     }
 
     @PostMapping("users")
-    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UsuarioResponseDto> saveUser(@RequestBody UserRequestDto userDto) {
         return new ResponseEntity<>(usuarioMapper.toDto(registrarUsuarioPort.execute(usuarioMapper.toDomain(userDto))),
                 HttpStatus.CREATED);
     }

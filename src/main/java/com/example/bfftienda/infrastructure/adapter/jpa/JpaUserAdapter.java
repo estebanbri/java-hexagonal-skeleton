@@ -1,6 +1,6 @@
 package com.example.bfftienda.infrastructure.adapter.jpa;
 
-import com.example.bfftienda.application.port.out.UsuarioRepositorioPort;
+import com.example.bfftienda.application.port.out.usuario.UsuarioRepositorioPort;
 import com.example.bfftienda.domain.model.Usuario;
 import com.example.bfftienda.infrastructure.adapter.jpa.mapper.UsuarioEntityMapper;
 import com.example.bfftienda.infrastructure.adapter.jpa.repository.SpringJpaUsuarioRepository;

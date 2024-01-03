@@ -1,8 +1,8 @@
 package com.example.bfftienda.infrastructure.adapter.service;
 
-import com.example.bfftienda.application.port.out.UsuarioServicePort;
+import com.example.bfftienda.application.port.out.usuario.UsuarioServicePort;
 import com.example.bfftienda.domain.model.Usuario;
-import com.example.bfftienda.infrastructure.adapter.gateway.UsuarioClient;
+import com.example.bfftienda.infrastructure.adapter.gateway.usuario.UsuarioClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

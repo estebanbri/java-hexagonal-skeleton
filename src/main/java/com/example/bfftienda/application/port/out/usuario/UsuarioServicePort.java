@@ -1,4 +1,4 @@
-package com.example.bfftienda.application.port.out;
+package com.example.bfftienda.application.port.out.usuario;
 
 import com.example.bfftienda.domain.model.Usuario;
 

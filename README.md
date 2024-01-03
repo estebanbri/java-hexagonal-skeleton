@@ -35,7 +35,9 @@ tu sistema, es decir en este punto por ahora no pensamos en la implementación s
 
 ### Paso 3.1: Crear puertos primarios (inbound)  (AKA Interfaces inbound)
 Es la "spec core" de lo que necesita hacer tu app para cumplir lo anterior. Tambien se los conoce como inbound
-o de entrada porque son puertos de entrypoint a la logica central de tu app.
+o de entrada porque son puertos de entrypoint a la logica central de tu app. Estos puertos realmente no son necesarios
+se agregan simplemente para diferenciarlos de los puertos outbound. (Ver al final del readme explico el porque no son utiles ni necesarias las 
+interfaces representando los puertos inbound)
 ```
 bff-tienda/application/port/in
 ```
@@ -147,8 +149,8 @@ public class RestUserAdapter {
     }
 
     @PostMapping("users")
-    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
-        return new ResponseEntity<>(usuarioMapper.toDto(registrarUsuarioPort.execute(usuarioMapper.toDomain(userDto))),
+    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto usuarioRequestDto) {
+        return new ResponseEntity<>(usuarioMapper.toDto(registrarUsuarioPort.execute(usuarioMapper.toDomain(usuarioRequestDto))),
                 HttpStatus.CREATED);
     }
 

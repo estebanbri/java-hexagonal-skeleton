@@ -1,4 +1,4 @@
-package com.example.bfftienda.infrastructure.adapter.gateway;
+package com.example.bfftienda.infrastructure.adapter.gateway.usuario;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;

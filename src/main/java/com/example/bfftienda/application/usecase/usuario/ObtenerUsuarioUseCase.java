@@ -1,8 +1,8 @@
-package com.example.bfftienda.application.usecase;
+package com.example.bfftienda.application.usecase.usuario;
 
 import com.example.bfftienda.application.common.UseCase;
-import com.example.bfftienda.application.port.in.ConsultarUsuarioPort;
-import com.example.bfftienda.application.port.out.UsuarioRepositorioPort;
+import com.example.bfftienda.application.port.in.usuario.ConsultarUsuarioPort;
+import com.example.bfftienda.application.port.out.usuario.UsuarioRepositorioPort;
 import com.example.bfftienda.domain.model.Usuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
