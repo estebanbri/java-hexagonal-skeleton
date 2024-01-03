@@ -82,6 +82,11 @@ public class AdministrarUsuarioUseCase implements AdministrarUsuario {
 }
 ```
 
+En resumen sobre los usecases:
+- Use-cases must be in application module.
+- use-cases can be considered as the equivalent of spring services. Both use-cases and spring services have application logic inside. 
+- But application and domain modules must be technology independent due to the nature of hexagonal. So, don't use service annotation in use-cases. Make them bean in infrastructure module.
+
 ### Paso 3.4: Crear testing
 - test unitarios 
 - test de aceptación de la capa de application: usando los puertos primarios como puerta de entrada para el testing
