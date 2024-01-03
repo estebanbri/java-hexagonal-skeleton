@@ -1,5 +1,7 @@
 # Proyecto base para implementar arquitectura hexagonal (patron puertos y adaptadores)
 Ejemplo básico: guardar y recuperar los datos de un usuario.
+Nota: hay un concepto de vertical slicing que mejora el diseño. Cada feature de tu app va a tener 
+su propias 3 capas de la hexagonal. (Mas sobre esto: https://medium.com/@oliveraluis11/arquitectura-hexagonal-con-spring-boot-parte-1-57b797eca69c)
 
 ![Descripción de la imagen](https://github.com/estebanbri/scaffold-arquitectura-hexagonal/blob/master/arquitectura.png)
 
