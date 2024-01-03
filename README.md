@@ -16,7 +16,7 @@ Post - http://localhost:8080/users
 Identificando actores y tareas que hacen cada uno de ellos.
 
 Ejemplo:
-- Yo necesito poder guardar los datos de un usuario
+- Yo necesito poder guardar los datos de un usuario, y poder registrar el alta en un sistema externo mediante llamada api rest.
 - Yo necesito poder recuperar los datos de un usuario dado un id
 
 ## Pasos 2: Crear el paquete de 'domain'.
@@ -33,31 +33,39 @@ dentro de los modelos llevando a tus modelos de estado ANEMIC (simple estructura
 En este paso volcar las reglas de negocio recolectadas en el paso 1 a puertos, es decir a especificaciones (spec) de
 tu sistema, es decir en este punto por ahora no pensamos en la implementación solo en especificación mediante interfaces.
 
-### Paso 3.1: Crear puertos primarios (inbound)
+### Paso 3.1: Crear puertos primarios (inbound)  (AKA Interfaces inbound)
 Es la "spec core" de lo que necesita hacer tu app para cumplir lo anterior. Tambien se los conoce como inbound
 o de entrada porque son puertos de entrypoint a la logica central de tu app.
 ```
 bff-tienda/application/port/in
 ```
 ```java
-public interface AdministrarUsuario {
-    Usuario guardar(Usuario user);
-    Usuario retornarPorId(Long userId);
+public interface RegistrarUsuario {
+    Usuario execute(Usuario user);
+}
+
+public interface ConsultarUsuario {
+    Usuario execute(Long userId);
 }
 ```
-### Paso 3.2:  Crear puertos secundarios (outbound)
+### Paso 3.2:  Crear puertos secundarios (outbound) (AKA Interfaces outbound)
 A diferencia de los puertos principales los puertos secundarios son "spec de soporte" para poder cumplir la casuistica
 de la regla de negocio manera completa. Tambien se los conoce como outbound o de salida porque son puertos
 de los cuales tu aplicación va a exponer para servicios externos como api's third party o db.
 ```
 bff-tienda/application/port/out
 ```
-Como su trabajo es simplemente guardar, y permitir recuperar usuarios entonces:
+Vamos a necesitar 2 puertos uno para guardar, y permitir recuperar usuarios y otro para registrar el alta en el sistema externo entonces:
 
 ```java
-public interface UsuarioRepositorio {
+public interface UsuarioRepositorioPort {
     Usuario guardar(Usuario usuario);
     Usuario retornarPorId(Long userId);
+}
+
+public interface UsuarioServicePort {
+    void registrar(Usuario usuario);
+    void eliminar(Usuario usuario);
 }
 ```
 
@@ -75,16 +83,30 @@ bff-tienda/application/usecase
 @Slf4j
 public class AdministrarUsuarioUseCase implements AdministrarUsuario {
 
-    private final UsuarioRepositorio usuarioRepositorio;
+    private final UsuarioRepositorioPort usuarioRepositorio;
+
+    // Simulamos la necesidad de registrar el alta en un servicio externo ademas de guardarlo en la db
+    private final UsuarioServicePort usuarioServicePort;
 
     @Override
-    public Usuario guardar(Usuario usuario) {
+    public Usuario execute(Usuario usuario) {
+        usuarioServicePort.registrar(usuario);
         return usuarioRepositorio.guardar(usuario);
     }
+}
+```
+
+```java
+@UseCase
+@RequiredArgsConstructor
+@Slf4j
+public class ObtenerUsuarioUseCase implements ConsultarUsuarioPort {
+
+    private final UsuarioRepositorioPort usuarioRepositorio;
 
     @Override
-    public Usuario retornarPorId(Long userId) {
-        return usuarioRepositorio.retornarPorId(userId);
+    public Usuario execute(Long usuarioId) {
+        return usuarioRepositorio.retornarPorId(usuarioId);
     }
 }
 ```
@@ -111,19 +133,22 @@ Cada adapter inbound (interno) va a hacer uso mediante composición de los puert
 @RestController
 public class RestUserAdapter {
 
-    private final AdministrarUsuarioPort administrarUsuario;
+    // Tal como menciono en el readme los puertos inbound no son necesarios crearlos por ende aqui podria usar directamente los use-cases
+    // Pero esta hecho asi a proposito para dejar bien en claro que la comunicacion de los adaptadores es atraves de los ports de la aplicación.
+    private final RegistrarUsuarioPort registrarUsuarioPort;
+    private final ConsultarUsuarioPort consultarUsuarioPort;
 
     private final UsuarioDtoMapper usuarioMapper;
 
-    @GetMapping("users/user/{id}")
+    @GetMapping("users/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        return new ResponseEntity<>(usuarioMapper.toDto(administrarUsuario.retornarPorId(id)), HttpStatus.OK);
+        return new ResponseEntity<>(usuarioMapper.toDto(consultarUsuarioPort.execute(id)), HttpStatus.OK);
 
     }
 
     @PostMapping("users")
     public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
-        return new ResponseEntity<>(usuarioMapper.toDto(administrarUsuario.guardar(usuarioMapper.toDomain(userDto))),
+        return new ResponseEntity<>(usuarioMapper.toDto(registrarUsuarioPort.execute(usuarioMapper.toDomain(userDto))),
                 HttpStatus.CREATED);
     }
 
@@ -153,6 +178,38 @@ public class JpaUserAdapter implements UsuarioRepositorio {
         return usuarioMapper.toDomain(springJpaUsuarioRepository.findById(userId).orElseThrow());
     }
 }
+
+@Service
+@RequiredArgsConstructor
+public class UsuarioServiceImpl implements UsuarioServicePort {
+
+    private static final Logger log = LoggerFactory.getLogger(UsuarioServiceImpl.class);
+
+    private final UsuarioClient usuarioClient;
+
+    @Override
+    public void registrar(Usuario usuario) {
+        String response = usuarioClient.registrarUsuario();
+        log.info("Usuario registrado existosamente en al 3rd Party API, response: {}", response);
+    }
+
+    @Override
+    public void eliminar(Usuario usuario) {
+        String response = usuarioClient.eliminarUsuario();
+        log.info("Usuario eliminado existosamente en al 3rd Party API, response: {}", response);
+    }
+}
+
+@FeignClient(name = "api-usuario", url = "https://httpbin.org")
+public interface UsuarioClient {
+
+    @PostMapping(path = "/post", produces = MediaType.APPLICATION_JSON_VALUE)
+    String registrarUsuario();
+
+    @DeleteMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    String eliminarUsuario();
+}
+
 ```
 
 ### Paso 4.4: Crear Testing
@@ -176,6 +233,12 @@ type = FilterType.ANNOTATION, value = UseCase.class
 )
 public class ApplicationConfig {
 }
+
+@Configuration
+@EnableFeignClients(basePackages = "com.example.bfftienda.infrastructure.adapter.gateway")
+public class FeignClientConfig {
+}
+
 ```
 
 # Conclusión
