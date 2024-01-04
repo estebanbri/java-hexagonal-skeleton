@@ -1,9 +1,15 @@
 # Proyecto base para implementar arquitectura hexagonal (patron puertos y adaptadores)
 Ejemplo básico: guardar y recuperar los datos de un usuario.
-Nota: hay un concepto de vertical slicing que mejora el diseño. Cada feature de tu app va a tener 
+Nota: hay un concepto de vertical slicing que mejora el diseño. Se basa en dividir tu app en features y cada feature va a contener 
 su propias 3 capas de la hexagonal. (Mas sobre esto: https://medium.com/@oliveraluis11/arquitectura-hexagonal-con-spring-boot-parte-1-57b797eca69c)
 
 ![Descripción de la imagen](https://github.com/estebanbri/scaffold-arquitectura-hexagonal/blob/master/arquitectura.png)
+
+> Totalmente prohibido: que codigo de tu capa de application (es decir tus usecases) acceda a clases/interfaces directamente que se encuentren definidos en la capa de infrastructure.
+> Es decir la relacion de uso siempre es de afuera hacia adentro, como vemos en nuestro ejemplo nuestra clase @RestController que se encuentra en la capa infra puede usar los puertos primarios
+> (o incluso los usecases directamente como detallo mas abajo) que se encuentran en la capa de application. Pero nunca podrias en tus clases de usecases que se encuentran en la capa de application
+> usar clases/interfaces que se encuentran definidas en la capa de infra. De esto es lo que se basa la arquitectura hexa es decir los boundaries de la capa de aplicacion tanto flujos de entrada
+> como de salida de la capa de application se hacen por medio de interfaces propias definidas dentro de la misma capa de application (que en la arquitectura estas interfaces son conocidas como puertos). 
 
 Como probar el ejemplo?
 
